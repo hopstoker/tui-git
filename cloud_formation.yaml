@@ -1,0 +1,806 @@
+Resources:
+  tuigithubtokenE97E27A6:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString: {}
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TuiGithubStack/tui--github--token/Resource
+  TuiGithubVpc4BF23A39:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/Resource
+  TuiGithubVpcPublicSubnet1SubnetF5863F07:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      CidrBlock: 10.0.0.0/18
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Public
+        - Key: aws-cdk:subnet-type
+          Value: Public
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet1
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet1/Subnet
+  TuiGithubVpcPublicSubnet1RouteTableA69BC60D:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet1
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet1/RouteTable
+  TuiGithubVpcPublicSubnet1RouteTableAssociationCB78117B:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: TuiGithubVpcPublicSubnet1RouteTableA69BC60D
+      SubnetId:
+        Ref: TuiGithubVpcPublicSubnet1SubnetF5863F07
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet1/RouteTableAssociation
+  TuiGithubVpcPublicSubnet1DefaultRouteAC917916:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: TuiGithubVpcIGW2D0F9AEC
+      RouteTableId:
+        Ref: TuiGithubVpcPublicSubnet1RouteTableA69BC60D
+    DependsOn:
+      - TuiGithubVpcVPCGW36F502E9
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet1/DefaultRoute
+  TuiGithubVpcPublicSubnet1EIP5CFCDA60:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet1
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet1/EIP
+  TuiGithubVpcPublicSubnet1NATGateway0031E23E:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - TuiGithubVpcPublicSubnet1EIP5CFCDA60
+          - AllocationId
+      SubnetId:
+        Ref: TuiGithubVpcPublicSubnet1SubnetF5863F07
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet1
+    DependsOn:
+      - TuiGithubVpcPublicSubnet1DefaultRouteAC917916
+      - TuiGithubVpcPublicSubnet1RouteTableAssociationCB78117B
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet1/NATGateway
+  TuiGithubVpcPublicSubnet2Subnet54D26C10:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      CidrBlock: 10.0.64.0/18
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Public
+        - Key: aws-cdk:subnet-type
+          Value: Public
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet2
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet2/Subnet
+  TuiGithubVpcPublicSubnet2RouteTable94DC2084:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet2
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet2/RouteTable
+  TuiGithubVpcPublicSubnet2RouteTableAssociationD243C614:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: TuiGithubVpcPublicSubnet2RouteTable94DC2084
+      SubnetId:
+        Ref: TuiGithubVpcPublicSubnet2Subnet54D26C10
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet2/RouteTableAssociation
+  TuiGithubVpcPublicSubnet2DefaultRoute370B1F1D:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: TuiGithubVpcIGW2D0F9AEC
+      RouteTableId:
+        Ref: TuiGithubVpcPublicSubnet2RouteTable94DC2084
+    DependsOn:
+      - TuiGithubVpcVPCGW36F502E9
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet2/DefaultRoute
+  TuiGithubVpcPublicSubnet2EIP60CDB130:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet2
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet2/EIP
+  TuiGithubVpcPublicSubnet2NATGatewayBD1E3828:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - TuiGithubVpcPublicSubnet2EIP60CDB130
+          - AllocationId
+      SubnetId:
+        Ref: TuiGithubVpcPublicSubnet2Subnet54D26C10
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PublicSubnet2
+    DependsOn:
+      - TuiGithubVpcPublicSubnet2DefaultRoute370B1F1D
+      - TuiGithubVpcPublicSubnet2RouteTableAssociationD243C614
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PublicSubnet2/NATGateway
+  TuiGithubVpcPrivateSubnet1Subnet74A51591:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      CidrBlock: 10.0.128.0/18
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Private
+        - Key: aws-cdk:subnet-type
+          Value: Private
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PrivateSubnet1
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet1/Subnet
+  TuiGithubVpcPrivateSubnet1RouteTable6BE4CF26:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PrivateSubnet1
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet1/RouteTable
+  TuiGithubVpcPrivateSubnet1RouteTableAssociation4133F83E:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: TuiGithubVpcPrivateSubnet1RouteTable6BE4CF26
+      SubnetId:
+        Ref: TuiGithubVpcPrivateSubnet1Subnet74A51591
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet1/RouteTableAssociation
+  TuiGithubVpcPrivateSubnet1DefaultRoute679E912F:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: TuiGithubVpcPublicSubnet1NATGateway0031E23E
+      RouteTableId:
+        Ref: TuiGithubVpcPrivateSubnet1RouteTable6BE4CF26
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet1/DefaultRoute
+  TuiGithubVpcPrivateSubnet2Subnet0E96A494:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      CidrBlock: 10.0.192.0/18
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Private
+        - Key: aws-cdk:subnet-type
+          Value: Private
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PrivateSubnet2
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet2/Subnet
+  TuiGithubVpcPrivateSubnet2RouteTable2A53E2D5:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc/PrivateSubnet2
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet2/RouteTable
+  TuiGithubVpcPrivateSubnet2RouteTableAssociation06DFE572:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: TuiGithubVpcPrivateSubnet2RouteTable2A53E2D5
+      SubnetId:
+        Ref: TuiGithubVpcPrivateSubnet2Subnet0E96A494
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet2/RouteTableAssociation
+  TuiGithubVpcPrivateSubnet2DefaultRouteDE76020D:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: TuiGithubVpcPublicSubnet2NATGatewayBD1E3828
+      RouteTableId:
+        Ref: TuiGithubVpcPrivateSubnet2RouteTable2A53E2D5
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/PrivateSubnet2/DefaultRoute
+  TuiGithubVpcIGW2D0F9AEC:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: TuiGithubStack/TuiGithubVpc
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/IGW
+  TuiGithubVpcVPCGW36F502E9:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId:
+        Ref: TuiGithubVpcIGW2D0F9AEC
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/VPCGW
+  TuiGithubVpcRestrictDefaultSecurityGroupCustomResource3C75D03F:
+    Type: Custom::VpcRestrictDefaultSG
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E
+          - Arn
+      DefaultSecurityGroupId:
+        Fn::GetAtt:
+          - TuiGithubVpc4BF23A39
+          - DefaultSecurityGroup
+      Account:
+        Ref: AWS::AccountId
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpc/RestrictDefaultSecurityGroupCustomResource/Default
+  CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: Inline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:AuthorizeSecurityGroupIngress
+                  - ec2:AuthorizeSecurityGroupEgress
+                  - ec2:RevokeSecurityGroupIngress
+                  - ec2:RevokeSecurityGroupEgress
+                Resource:
+                  - Fn::Join:
+                      - ""
+                      - - "arn:"
+                        - Ref: AWS::Partition
+                        - ":ec2:"
+                        - Ref: AWS::Region
+                        - ":"
+                        - Ref: AWS::AccountId
+                        - :security-group/
+                        - Fn::GetAtt:
+                            - TuiGithubVpc4BF23A39
+                            - DefaultSecurityGroup
+    Metadata:
+      aws:cdk:path: TuiGithubStack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Role
+  CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}
+        S3Key: dd5711540f04e06aa955d7f4862fc04e8cdea464cb590dae91ed2976bb78098e.zip
+      Timeout: 900
+      MemorySize: 128
+      Handler: __entrypoint__.handler
+      Role:
+        Fn::GetAtt:
+          - CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0
+          - Arn
+      Runtime: nodejs18.x
+      Description: Lambda function for removing all inbound/outbound rules from the VPC default security group
+    DependsOn:
+      - CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0
+    Metadata:
+      aws:cdk:path: TuiGithubStack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Handler
+      aws:asset:path: asset.dd5711540f04e06aa955d7f4862fc04e8cdea464cb590dae91ed2976bb78098e
+      aws:asset:property: Code
+  TuiGithubVpcCluster946FFADB:
+    Type: AWS::ECS::Cluster
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpcCluster/Resource
+  TuiGithubVpcLink:
+    Type: AWS::ApiGatewayV2::VpcLink
+    Properties:
+      Name: V2 VPC Link
+      SubnetIds:
+        - Ref: TuiGithubVpcPrivateSubnet1Subnet74A51591
+        - Ref: TuiGithubVpcPrivateSubnet2Subnet0E96A494
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubVpcLink
+  TuiGitApi44FB437F:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: TUI Git API
+      ProtocolType: HTTP
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGitApi/Resource
+  TuiGitApiDefaultStage76C42504:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId:
+        Ref: TuiGitApi44FB437F
+      AutoDeploy: true
+      StageName: $default
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGitApi/DefaultStage/Resource
+  TuiGithubServiceLB16CC80A9:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      LoadBalancerAttributes:
+        - Key: deletion_protection.enabled
+          Value: "false"
+      Scheme: internet-facing
+      SecurityGroups:
+        - Fn::GetAtt:
+            - TuiGithubServiceLBSecurityGroupAEA78B36
+            - GroupId
+      Subnets:
+        - Ref: TuiGithubVpcPublicSubnet1SubnetF5863F07
+        - Ref: TuiGithubVpcPublicSubnet2Subnet54D26C10
+      Type: application
+    DependsOn:
+      - TuiGithubVpcPublicSubnet1DefaultRouteAC917916
+      - TuiGithubVpcPublicSubnet1RouteTableAssociationCB78117B
+      - TuiGithubVpcPublicSubnet2DefaultRoute370B1F1D
+      - TuiGithubVpcPublicSubnet2RouteTableAssociationD243C614
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/LB/Resource
+  TuiGithubServiceLBSecurityGroupAEA78B36:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Automatically created Security Group for ELB TuiGithubStackTuiGithubServiceLBCCB5CFA7
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow from anyone on port 8080
+          FromPort: 8080
+          IpProtocol: tcp
+          ToPort: 8080
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/LB/SecurityGroup/Resource
+  TuiGithubServiceLBSecurityGrouptoTuiGithubStackTuiGithubServiceSecurityGroupB091D6F78080EF5225DC:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Load balancer to target
+      DestinationSecurityGroupId:
+        Fn::GetAtt:
+          - TuiGithubServiceSecurityGroup4EB94560
+          - GroupId
+      FromPort: 8080
+      GroupId:
+        Fn::GetAtt:
+          - TuiGithubServiceLBSecurityGroupAEA78B36
+          - GroupId
+      IpProtocol: tcp
+      ToPort: 8080
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/LB/SecurityGroup/to TuiGithubStackTuiGithubServiceSecurityGroupB091D6F7:8080
+  TuiGithubServiceLBPublicListener80C0F1E3:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn:
+            Ref: TuiGithubServiceLBPublicListenerECSGroupA129835E
+          Type: forward
+      LoadBalancerArn:
+        Ref: TuiGithubServiceLB16CC80A9
+      Port: 8080
+      Protocol: HTTP
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/LB/PublicListener/Resource
+  TuiGithubServiceLBPublicListenerECSGroupA129835E:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckPath: /actuator/health
+      HealthCheckPort: "8080"
+      Port: 80
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: "false"
+      TargetType: ip
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/LB/PublicListener/ECSGroup/Resource
+  TuiGithubServiceTaskDefTaskRoleE68B5E13:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/TaskDef/TaskRole/Resource
+  TuiGithubServiceTaskDef3C5F5983:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Environment:
+            - Name: GITHUB_TOKEN
+              Value:
+                Fn::Join:
+                  - ""
+                  - - "{{resolve:secretsmanager:"
+                    - Ref: tuigithubtokenE97E27A6
+                    - :SecretString:::}}
+          Essential: true
+          Image:
+            Fn::Sub: ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}:003f80fdb80a9f4dcf441147f85d8b0d6a6077fb85635304856d776342b3328b
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: TuiGithubServiceTaskDefwebLogGroup39A7AAE1
+              awslogs-stream-prefix: TuiGithubService
+              awslogs-region:
+                Ref: AWS::Region
+          Name: web
+          PortMappings:
+            - ContainerPort: 8080
+              Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Fn::GetAtt:
+          - TuiGithubServiceTaskDefExecutionRole30A4478B
+          - Arn
+      Family: TuiGithubStackTuiGithubServiceTaskDefB6208414
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::GetAtt:
+          - TuiGithubServiceTaskDefTaskRoleE68B5E13
+          - Arn
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/TaskDef/Resource
+  TuiGithubServiceTaskDefwebLogGroup39A7AAE1:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/TaskDef/web/LogGroup/Resource
+  TuiGithubServiceTaskDefExecutionRole30A4478B:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/TaskDef/ExecutionRole/Resource
+  TuiGithubServiceTaskDefExecutionRoleDefaultPolicy79D5DEDB:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:BatchGetImage
+              - ecr:GetDownloadUrlForLayer
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - ":ecr:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - :repository/
+                  - Fn::Sub: cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}
+          - Action: ecr:GetAuthorizationToken
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - TuiGithubServiceTaskDefwebLogGroup39A7AAE1
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: TuiGithubServiceTaskDefExecutionRoleDefaultPolicy79D5DEDB
+      Roles:
+        - Ref: TuiGithubServiceTaskDefExecutionRole30A4478B
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/TaskDef/ExecutionRole/DefaultPolicy/Resource
+  TuiGithubServiceD38960EA:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster:
+        Ref: TuiGithubVpcCluster946FFADB
+      DeploymentConfiguration:
+        Alarms:
+          AlarmNames: []
+          Enable: false
+          Rollback: false
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
+      DesiredCount: 1
+      EnableECSManagedTags: false
+      HealthCheckGracePeriodSeconds: 60
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: web
+          ContainerPort: 8080
+          TargetGroupArn:
+            Ref: TuiGithubServiceLBPublicListenerECSGroupA129835E
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - Fn::GetAtt:
+                - TuiGithubServiceSecurityGroup4EB94560
+                - GroupId
+          Subnets:
+            - Ref: TuiGithubVpcPrivateSubnet1Subnet74A51591
+            - Ref: TuiGithubVpcPrivateSubnet2Subnet0E96A494
+      TaskDefinition:
+        Ref: TuiGithubServiceTaskDef3C5F5983
+    DependsOn:
+      - TuiGithubServiceLBPublicListenerECSGroupA129835E
+      - TuiGithubServiceLBPublicListener80C0F1E3
+      - TuiGithubServiceTaskDefTaskRoleE68B5E13
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/Service/Service
+  TuiGithubServiceSecurityGroup4EB94560:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: TuiGithubStack/TuiGithubService/Service/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      VpcId:
+        Ref: TuiGithubVpc4BF23A39
+    DependsOn:
+      - TuiGithubServiceTaskDefTaskRoleE68B5E13
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/Service/SecurityGroup/Resource
+  TuiGithubServiceSecurityGroupfromTuiGithubStackTuiGithubServiceLBSecurityGroup147C17B0808021F9C9E5:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Load balancer to target
+      FromPort: 8080
+      GroupId:
+        Fn::GetAtt:
+          - TuiGithubServiceSecurityGroup4EB94560
+          - GroupId
+      IpProtocol: tcp
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - TuiGithubServiceLBSecurityGroupAEA78B36
+          - GroupId
+      ToPort: 8080
+    DependsOn:
+      - TuiGithubServiceTaskDefTaskRoleE68B5E13
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubService/Service/SecurityGroup/from TuiGithubStackTuiGithubServiceLBSecurityGroup147C17B0:8080
+  TuiGithubCfnIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId:
+        Ref: TuiGitApi44FB437F
+      ConnectionId:
+        Ref: TuiGithubVpcLink
+      ConnectionType: VPC_LINK
+      Description: API integration with Fargate
+      IntegrationMethod: ANY
+      IntegrationType: HTTP_PROXY
+      IntegrationUri:
+        Ref: TuiGithubServiceLBPublicListener80C0F1E3
+      PayloadFormatVersion: "1.0"
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubCfnIntegration
+  TuiGithubGetReposRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId:
+        Ref: TuiGitApi44FB437F
+      RouteKey: ANY /{proxy+}
+      Target:
+        Fn::Join:
+          - ""
+          - - integrations/
+            - Ref: TuiGithubCfnIntegration
+    Metadata:
+      aws:cdk:path: TuiGithubStack/TuiGithubGetReposRoute
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/31S227bMAz9lr4r2hzsB9y06zIUm+EUfQ1oWfW42JKgS4rA8L+P9CVJL9gTD48OJZJHa5ll32R2A69hperDqsVK9rsI6iCI2vdBK69j6MBAoz0djbnYvJgJDUKrteyfnWLuudiIIlUtql2qzKw7o9KmqJ+gavWFv3B5CFYhRLTmLGZwvy04/IL4AFG/wkkUHo8ELxdvTdSe8CKYOpmzPNI0fzptoqCWk8d4evA2uXmG/xD3jdchfKC3ZuR58iD7TZsCvc6qBX4H3wBPFQ53+gUNLjO9Z6yJgEb7K26u3Wl/RDXtaYKDAIfNNNKRNv4jRpc7ZAUHTsm2ZipZAC+m8W93yn37PYRAtso7qw7abzvS58zwmSy1swGj9adbCJrH3DuIvOIgc+fI3fHGRwv1LbRglK7fta1bCBFVS4pqVKBpuOnPq8flvcmvdUg7NbNmwVfnT/QyOb8YeJUOAqGTfWmn/zbGwlLd+EEmNIjWNuTio23OVyx4GESpg02efSBnbXdJ6brPjwpvj1hzi7xONoJGZ/3vFF0afyvZXo9mD+InHOFLlsmvcp3d/A2IK59MxE7Lcor/AEUz42WfAwAA
+    Metadata:
+      aws:cdk:path: TuiGithubStack/CDKMetadata/Default
+    Condition: CDKMetadataAvailable
+Outputs:
+  TuiGithubServiceLoadBalancerDNSF35F8D7F:
+    Value:
+      Fn::GetAtt:
+        - TuiGithubServiceLB16CC80A9
+        - DNSName
+  TuiGithubServiceServiceURL7029D575:
+    Value:
+      Fn::Join:
+        - ""
+        - - http://
+          - Fn::GetAtt:
+              - TuiGithubServiceLB16CC80A9
+              - DNSName
+Conditions:
+  CDKMetadataAvailable:
+    Fn::Or:
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - af-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ca-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-northwest-1
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-3
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - il-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - me-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - me-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - sa-east-1
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-2
+Parameters:
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert:
+          Fn::Not:
+            - Fn::Contains:
+                - - "1"
+                  - "2"
+                  - "3"
+                  - "4"
+                  - "5"
+                - Ref: BootstrapVersion
+        AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.

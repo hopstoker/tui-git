@@ -1,0 +1,67 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /owners/{owner}/repos:
+    get:
+      tags:
+        - TUI GitHub API
+      summary: Fetch all repos and branches for user
+      operationId: getRepos
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListReposResponse'
+        '404':
+          description: no such user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceError'
+        '406':
+          description: bad media type requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceError'
+components:
+  schemas:
+    ServiceError:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ListReposResponse:
+      type: object
+      properties:
+        repos:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepoInfo'
+    RepoInfo:
+      type: object
+      properties:
+        repoName:
+          type: string
+        owner:
+          type: string
+        branchToLatestCommit:
+          type: object
+          additionalProperties:
+            type: string

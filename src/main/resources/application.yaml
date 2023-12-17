@@ -1,0 +1,4 @@
+client:
+  github:
+    url: 'https://api.github.com'
+    token: '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'
