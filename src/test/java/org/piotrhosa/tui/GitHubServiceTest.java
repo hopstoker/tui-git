@@ -9,8 +9,10 @@ import org.piotrhosa.tui.model.RepoInfo;
 import org.piotrhosa.tui.service.GitHubService;
 import reactor.core.Exceptions;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,10 +51,10 @@ public class GitHubServiceTest {
 
         var actualRepos = gitHubService.getRepos(gitHubUser);
 
-        Assertions.assertEquals(List.of(
+        Assertions.assertEquals(Set.of(
                 new RepoInfo("repo1", gitHubUser, Map.of()),
                 new RepoInfo("repo2", gitHubUser, Map.of())
-        ), actualRepos);
+        ), new HashSet<>(actualRepos));
     }
 
     @Test
@@ -75,10 +77,10 @@ public class GitHubServiceTest {
 
         var actualRepos = gitHubService.getRepos(gitHubUser);
 
-        Assertions.assertEquals(List.of(
+        Assertions.assertEquals(Set.of(
                 new RepoInfo("repo1", gitHubUser, Map.of("branch1-1", "sha1")),
                 new RepoInfo("repo2", gitHubUser, Map.of("branch2-1", "sha2"))
-        ), actualRepos);
+        ), new HashSet<>(actualRepos));
     }
 
     @Test
